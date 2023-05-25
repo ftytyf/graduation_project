@@ -27,6 +27,13 @@ declare namespace UserManagement {
     key: string;
   }
 
+  interface Data extends ApiUserManagement.Data {
+    /** 序号 */
+    Index: number;
+    /** 表格的key（id） */
+    key: string;
+  }
+
   /**
    * 用户性别
    * - 0: 女
@@ -41,5 +48,5 @@ declare namespace UserManagement {
    * - 3: 冻结
    * - 4: 软删除
    */
-  type UserStatusKey = NonNullable<User['userStatus']>;
+  type UserStatusKey = NonNullable<User['userRole']>;
 }

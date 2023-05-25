@@ -2,8 +2,35 @@
   <n-modal v-model:show="modalVisible" preset="card" :title="title" class="w-700px">
     <n-form ref="formRef" label-placement="left" :label-width="80" :model="formModel" :rules="rules">
       <n-grid :cols="24" :x-gap="18">
-        <n-form-item-grid-item :span="12" label="身份" path="userRole">
-          <n-select v-model:value="formModel.userRole" :options="userStatusOptions" />
+        <n-form-item-grid-item :span="12" label="index" path="index">
+          <n-input v-model:value="formModel.index" />
+        </n-form-item-grid-item>
+        <n-form-item-grid-item :span="12" label="id" path="id">
+          <n-input v-model:value="formModel.id" />
+        </n-form-item-grid-item>
+        <n-form-item-grid-item :span="12" label="beer_name" path="beer_name">
+          <n-input v-model:value="formModel.beer_name" />
+        </n-form-item-grid-item>
+        <n-form-item-grid-item :span="12" label="style" path="style">
+          <n-input v-model:value="formModel.style" />
+        </n-form-item-grid-item>
+        <n-form-item-grid-item :span="12" label="ounces" path="ounces">
+          <n-input v-model:value="formModel.ounces" />
+        </n-form-item-grid-item>
+        <n-form-item-grid-item :span="12" label="abv" path="abv">
+          <n-input v-model:value="formModel.abv" />
+        </n-form-item-grid-item>
+        <n-form-item-grid-item :span="12" label="brewery_id" path="brewery_id">
+          <n-input v-model:value="formModel.brewery_id" />
+        </n-form-item-grid-item>
+        <n-form-item-grid-item :span="12" label="brewery_name" path="brewery_name">
+          <n-input v-model:value="formModel.brewery_name" />
+        </n-form-item-grid-item>
+        <n-form-item-grid-item :span="12" label="city" path="city">
+          <n-input v-model:value="formModel.city" />
+        </n-form-item-grid-item>
+        <n-form-item-grid-item :span="12" label="state" path="state">
+          <n-input v-model:value="formModel.state" />
         </n-form-item-grid-item>
       </n-grid>
       <n-space class="w-full pt-16px" :size="24" justify="end">
@@ -16,13 +43,12 @@
 
 <script setup lang="ts">
 import { ref, computed, reactive, watch } from 'vue';
-import {defineEmits} from 'vue';
 import type { FormInst, FormItemRule } from 'naive-ui';
+import { dataChange } from '@/service';
 import { genderOptions, userStatusOptions } from '@/constants';
-import { userRoleChange } from '@/service';
 import { formRules, createRequiredFormRule } from '@/utils';
-import type { UserManagement } from '~/src/typings/business';
-// import { getTableData } from '@/views/management/user/index.vue';
+import { stringify } from 'querystring';
+import { number } from 'echarts';
 
 export interface Props {
   /** 弹窗可见性 */
@@ -34,7 +60,7 @@ export interface Props {
    */
   type?: 'add' | 'edit';
   /** 编辑的表格行数据 */
-  editData?: UserManagement.User | null;
+  editData?: UserManagement.Data | null;
 }
 
 export type ModalType = NonNullable<Props['type']>;
@@ -48,7 +74,6 @@ const props = withDefaults(defineProps<Props>(), {
 
 interface Emits {
   (e: 'update:visible', visible: boolean): void;
-  (e: 'update-data'): void;
 }
 
 const emit = defineEmits<Emits>();
@@ -75,26 +100,34 @@ const title = computed(() => {
 
 const formRef = ref<HTMLElement & FormInst>();
 
-type FormModel = Pick<UserManagement.User, 'userName' | 'password' | 'gender' | 'phone' | 'email' | 'userRole'>;
+type FormModel = Pick<
+  UserManagement.Data,
+  'index' | 'id' | 'beer_name' | 'style' | 'ounces' | 'abv' | 'brewery_id' | 'brewery_name' | 'city' | 'state'
+>;
 
 const formModel = reactive<FormModel>(createDefaultFormModel());
 
-const rules: Record<keyof FormModel, FormItemRule | FormItemRule[]> = {
-  userName: createRequiredFormRule('请输入用户名'),
-  password: formRules.pwd,
-  phone: formRules.phone,
-  email: formRules.email,
-  userRole: createRequiredFormRule('请选择用户状态')
-};
+// const rules: Record<keyof FormModel, FormItemRule | FormItemRule[]> = {
+//   userName: createRequiredFormRule('请输入用户名'),
+//   age: createRequiredFormRule('请输入年龄'),
+//   gender: createRequiredFormRule('请选择性别'),
+//   phone: formRules.phone,
+//   email: formRules.email,
+//   userStatus: createRequiredFormRule('请选择用户状态')
+// };
 
 function createDefaultFormModel(): FormModel {
   return {
-    userName: '',
-    password: '',
-    gender: null,
-    phone: '',
-    email: null,
-    userRole: null
+    index: null,
+    id: null,
+    beer_name: null,
+    style: null,
+    ounces: null,
+    abv: null,
+    brewery_id: null,
+    brewery_name: null,
+    city: null,
+    state: null
   };
 }
 
@@ -119,12 +152,10 @@ function handleUpdateFormModelByModalType() {
 }
 
 async function handleSubmit() {
+  // 将修改的数据发送到后端
   await formRef.value?.validate();
-  const userRole = formModel.userRole;
-  const id = formModel.userId;
-  await userRoleChange(id, userRole);
-  window.$message?.success('操作成功!');
-  emit('update-data');
+  await dataChange(formModel, props.type);
+  window.$message?.success('修改成功!');
   closeModal();
 }
 

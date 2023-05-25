@@ -37,9 +37,13 @@
           </n-grid>
         </n-card>
         <n-card title="创意" :bordered="false" size="small" class="shadow-sm rounded-16px">
-          <div class="flex-center h-380px">
-            <icon-local-banner class="text-400px sm:text-320px text-primary" />
-          </div>
+          <n-upload accept=".csv" :custom-request="customRequest">
+            <n-button>上传 脏数据文件</n-button>
+          </n-upload>
+          <n-upload accept=".csv" :custom-request="customRequest1">
+            <n-button>上传 依赖文件</n-button>
+          </n-upload>
+          <n-button type="info" ghost @click="downloadData()"> 下载数据 </n-button>
         </n-card>
       </n-space>
     </n-grid-item>
@@ -47,8 +51,20 @@
 </template>
 
 <script setup lang="ts">
+import { Uploaddirty } from '@/service';
+import { Uploadrule } from '@/service';
 import { ShortcutsCard, TechnologyCard } from './components';
-
+import { localStg } from '~/src/utils';
+const customRequest = async ({ file }) => {
+  const formData = new FormData();
+  formData.append('file', file.file as File);
+  Uploaddirty(formData);
+};
+const customRequest1 = async ({ file }) => {
+  const formData = new FormData();
+  formData.append('file', file.file as File);
+  Uploadrule(formData);
+};
 defineOptions({ name: 'DashboardWorkbenchMain' });
 
 interface Technology {
@@ -60,6 +76,34 @@ interface Technology {
   icon: string;
   iconColor?: string;
 }
+const downloadData = () => {
+  const xhr = new XMLHttpRequest();
+  xhr.open('POST', 'http://localhost:3200/proxy-pattern/download', true);
+  xhr.responseType = 'blob';
+  xhr.setRequestHeader('Content-Type', 'application/json');
+
+  xhr.setRequestHeader('Authorization', `Bearer ${localStg.get('token')}`);
+  // eslint-disable-next-line func-names
+  xhr.onload = function () {
+    if (this.status === 200) {
+      const blob = this.response;
+      const reader = new FileReader();
+      reader.readAsDataURL(blob);
+      // eslint-disable-next-line func-names
+      reader.onload = function (e) {
+        const a = document.createElement('a');
+        a.download = 'data.csv';
+        if (typeof e.target.result === 'string') {
+          a.href = e.target.result;
+        }
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+      };
+    }
+  };
+  xhr.send(JSON.stringify({ data_name: 'left_test' }));
+};
 
 const technology: Technology[] = [
   {

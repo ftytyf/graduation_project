@@ -31,15 +31,15 @@ export const genderOptions: Common.OptionWithKey<UserManagement.GenderKey>[] = [
 
 /** 用户状态 */
 export const userStatusLabels: Record<UserManagement.UserStatusKey, string> = {
-  1: '启用',
-  2: '禁用',
-  3: '冻结',
-  4: '软删除'
+  1: '超级管理员',
+  2: '管理员',
+  3: '普通用户',
+
 };
 
 export const userStatusOptions: Common.OptionWithKey<UserManagement.UserStatusKey>[] = [
-  { value: '1', label: userStatusLabels['1'] },
+  // { value: '1', label: userStatusLabels['1'] },
   { value: '2', label: userStatusLabels['2'] },
-  { value: '3', label: userStatusLabels['3'] },
-  { value: '4', label: userStatusLabels['4'] }
+  { value: '3', label: userStatusLabels['3'] }
+  // { value: '4', label: userStatusLabels['4'] }
 ];

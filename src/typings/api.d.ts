@@ -29,17 +29,15 @@ declare namespace ApiRoute {
 declare namespace ApiUserManagement {
   interface User {
     /** 用户id */
-    id: string;
+    userId: string;
     /** 用户名 */
     userName: string | null;
     /** 用户年龄 */
-    age: number | null;
     /**
      * 用户性别
      * - 0: 女
      * - 1: 男
      */
-    gender: '0' | '1' | null;
     /** 用户手机号码 */
     phone: string;
     /** 用户邮箱 */
@@ -51,6 +49,20 @@ declare namespace ApiUserManagement {
      * - 3: 冻结
      * - 4: 软删除
      */
-    userStatus: '1' | '2' | '3' | '4' | null;
+    userRole: string;
+  }
+  interface Data {
+    data_id: number;
+    userName: string | null;
+    beer_name: string | null;
+    state: string | null;
+    brewery_name: string | null;
+    brewery_id: string | null;
+    abv: string | null;
+    ounces: string | null;
+    style: string | null;
+    id: string | null;
+    index: string | null;
+    city: string | null;
   }
 }

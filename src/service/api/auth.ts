@@ -1,3 +1,5 @@
+import { selectProps } from 'naive-ui';
+import type { List } from 'echarts';
 import { mockRequest, request } from '../request';
 
 /**
@@ -33,7 +35,7 @@ export function fetchUserInfo() {
  * @description 后端根据用户id查询到对应的角色类型，并将路由筛选出对应角色的路由数据返回前端
  */
 export function fetchUserRoutes(userId: string) {
-  return mockRequest.post<ApiRoute.Route>('/getUserRoutes', { userId });
+  return request.post<ApiRoute.Route>('/getUserRoutes', { userId });
 }
 
 /**
@@ -41,5 +43,66 @@ export function fetchUserRoutes(userId: string) {
  * @param refreshToken
  */
 export function fetchUpdateToken(refreshToken: string) {
-  return mockRequest.post<ApiAuth.Token>('/updateToken', { refreshToken });
+  return request.post<ApiAuth.Token>('/updateToken', { refreshToken });
 }
+
+export function Uploaddirty(file: FormData) {
+  return request.post('/Uploaddirty', file);
+}
+export function Uploadrule(file: FormData) {
+  return request.post('/Uploadrule', file);
+}
+// 删除用户
+export function fetchUserdel(rowId: string) {
+  return request.post('/userDel', { rowId });
+}
+// 批量删除用户
+export function fetchUserdels(rowId: List, power: string) {
+  return request.post('/userDels', { rowId, power });
+}
+// 更改用户身份
+export function userRoleChange(userid: number, userRole: string) {
+  return request.post('/userRoleChange', { userid, userRole });
+}
+// 修改脏数据或者增加脏数据
+export function dataChange(data: any, type: string) {
+  return request.post('/dataChange', { data, type });
+}
+// 删除脏数据
+export function fetchDatadel(index: string) {
+  return request.post('/dataDel', { index });
+}
+// 批量删除脏数据
+export function fetchDatadels(index: List) {
+  return request.post('/dataDels', { index });
+}
+
+export function fetchNull() {
+  return request.post('/nullPresent');
+}
+export function fetchFormat() {
+  return request.post('/formatPresent');
+}
+export function fetchFault() {
+  return request.post('/faultPresent');
+}
+export async function abvCandidate(index: string) {
+  return request.post('/abvCandidate', { index });
+}
+export async function stateCandidate(index: string) {
+  return request.post('/stateCandidate', { index });
+}
+export async function cityCandidate(index: string) {
+  return request.post('/cityCandidate', { index });
+}
+export async function completeCandidate(data: object) {
+  return request.post('/handrepair', { data });
+}
+export function autorepair() {
+  return request.post('/autorepair');
+}
+
+export const fetchfaulttype = async () => {
+  const data = await request.post('/faulttype');
+  return data;
+};
